@@ -1,51 +1,57 @@
-# Chat app 💬 using websockets (Nodejs, Express & Socket.io)
+TERMINAL1
+start mongod --replSet m101 -logpath \data\rs1\1.log --dbpath \data\rs1 --port 27020
 
-We are going to develop a chat application using Express, Websockets. Tough you can use plain websockets but we would be using a library called Socket.io - which is wrapper around Websockets, its super easy to use and provies a fallback to xhr requests until the websocket connection is established.
 
-The frontend-ui is based on Flexbox, no external UI libraries are used, so you can modify it as per your liking.
+TERMINAL2
 
----
+start mongod --replSet m101 -logpath \data\rs2\2.log --dbpath \data\rs2 --port 27021
 
-## What is Websocket ?
 
-WebSockets are an alternative to HTTP communication in Web Application, they offer full-duplex communication, that is, it is, bi-directional and that means the data can flow in both ways, so it can flow from client to the server and also from server to the client.
+TERMINAL3
 
----
+start mongod --replSet m101 -logpath \data\rs3\3.log --dbpath \data\rs3 --port 27022
 
-## To start setting up the project
 
-Step 1: Clone the repo
+TERMINAL1
 
-```bash
-git clone https://github.com/trulymittal/chat-socket.io.git
-```
+mongosh --port 27020
 
-Step 2: cd into the cloned repo and run:
+config = { _id: "m101", members:[
+          { _id : 0, host : "localhost:27020"},
+          { _id : 1, host : "localhost:27021"},
+          { _id : 2, host : "localhost:27022"} ]
+         };
 
-```bash
-npm install
-```
 
-Step 3: Start the chat app (development mode)
+rs.initiate(config);
+rs.status();
 
-```bash
-npm run dev
-```
+db.College.insert( { CName: "CBIT", Dept: "IT" } )
+db.College.find();
 
-Step 4: Start the chat app
+TERMINAL2
 
-```bash
-npm start
-```
+mongosh --port 27021
+rs.secondaryOk()
+db.College.find();
 
-## Author
+TERMINAL3
 
-- [**Truly Mittal**](https://trulymittal.com)
+mongosh --port 27022
+rs.secondaryOk()
+db.College.find();
 
-## Contribute
 
-You can fork this repo and send me a PR.
+TERMINAL1
 
-## License
+use admin;
+db.shutdownServer();
 
-This project is licensed under the MIT License.
+
+
+open a TERMINAL2 & TERMINAL3
+
+rs.status();
+
+
+
