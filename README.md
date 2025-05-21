@@ -1,4 +1,5 @@
 TERMINAL1
+
 start mongod --replSet m101 -logpath \data\rs1\1.log --dbpath \data\rs1 --port 27020
 
 
@@ -18,33 +19,42 @@ mongosh --port 27020
 
 config = { _id: "m101", members:[
           { _id : 0, host : "localhost:27020"},
+          
           { _id : 1, host : "localhost:27021"},
+          
           { _id : 2, host : "localhost:27022"} ]
          };
 
 
 rs.initiate(config);
+
 rs.status();
 
 db.College.insert( { CName: "CBIT", Dept: "IT" } )
+
 db.College.find();
 
 TERMINAL2
 
 mongosh --port 27021
+
 rs.secondaryOk()
+
 db.College.find();
 
 TERMINAL3
 
 mongosh --port 27022
+
 rs.secondaryOk()
+
 db.College.find();
 
 
 TERMINAL1
 
 use admin;
+
 db.shutdownServer();
 
 
